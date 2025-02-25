@@ -4,7 +4,7 @@
 // IntervaloRPM 1000 = Valor para realização da resposta ao degrau unitário
 // IntervaloRPM 5000 = Valor para acompanhamento da resposta a frequência
 #define IntervaloRPM  4000  // Define o valor do intervalo de tempo para calculo do rpm (Dado em microsegundos)
-#define RampaFreq 1  // Define o valor de frequencia do ciclo do seno em hz
+#define RampaFreq 0.5  // Define o valor de frequencia do ciclo do seno em hz
 
 //Temporizadores para uso no programa
 Neotimer parando = Neotimer(1000);  // Tempo de 1 segundos para ainda enviar dados após o motor parar
@@ -54,7 +54,7 @@ void setup() {
   // Preencha o array com valores da função sin
   for (int i = 0; i < numPontos; i++) {
     float fase = 2 * PI * i / numPontos; // Fase varia de 0 a 2*PI
-    senoArray[i] = 127.5 + 127.5*sin(fase);
+    senoArray[i] = 105 + 35*sin(fase);
     //senoArray[i] = 190 + 50*sin(fase);
   }
   //Cria um print da função seno criada para visualização
@@ -70,7 +70,8 @@ void loop(){
   calculaRPM();
   if(ligaMotor){
     refMotor0 = sensorValueA8 * (1500 / 1023.0); //Referência do motor de 0 a 2400 rpm //sensorValueA8
-    velmotor0 = sensorValueA8 * (255 / 1023.0); //Calcula velocidade do motor de 0 a 100% com base no pwm de 0 a 255 (gerado pelo entrada analógica A8) //sensorValueA8
+    //velmotor0 = sensorValueA8 * (255 / 1023.0); //Calcula velocidade do motor de 0 a 100% com base no pwm de 0 a 255 (gerado pelo entrada analógica A8) //sensorValueA8
+    velmotor0 = 140;
   }
   else{
       refMotor0 = 0;
@@ -123,7 +124,7 @@ void ImprimeStatus(){
     //Referência do motor no instante
     //Serial.print("Referência:");
     //Serial.print(map(refMotor0, 0, 1500, 2706, 3638));
-    Serial.print(map(velmotor1, 140, 240, 0, 1500));//(10*velmotor1);3218
+    Serial.print(map(velmotor1, 0, 140, 0, 1500));//(10*velmotor1);3218
     Serial.print(",");
     //Velocidade real do motor
     //Serial.print("Vel_Real:");
@@ -173,7 +174,7 @@ void contarPulsoA() {
 
 void calculaRPM(){
   if ((micros() - tempoAnteriorRPM) > IntervaloRPM){
-    rpm = int((contadorA / 28.) / (IntervaloRPM/60000000.));
+    rpm = int((contadorA / 70.) / (IntervaloRPM/60000000.));
     tempoAnteriorRPM = micros();
     contadorA = 0;
   }
